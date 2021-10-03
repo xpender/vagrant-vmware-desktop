@@ -10,7 +10,7 @@ import (
 )
 
 func (v *VmwarePaths) Load() error {
-	v.InstallDir = "/Applications/VMware Fusion.app"
+	v.InstallDir = "/Applications/VMware Fusion Tech Preview.app"
 	if _, err := os.Stat(v.InstallDir); err != nil {
 		v.logger.Trace("install path does not exist", "path", v.InstallDir)
 		return errors.New("Failed to locate VMware installation directory!")

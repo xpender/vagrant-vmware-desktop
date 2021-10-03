@@ -61,36 +61,37 @@ module HashiCorp
           @logger = Log4r::Logger.new("hashicorp::provider::vmware::vagrant_utility")
           @logger.debug("initialize HOST=#{host} PORT=#{port}")
           @connection = Net::HTTP.new(host, port)
-          @connection.use_ssl = true
-          @connection.verify_mode = OpenSSL::SSL::VERIFY_PEER
-          @connection.ca_file = File.join(opts[:certificate_path], "vagrant-utility.crt")
+          @connection.use_ssl = false
+          #@connection.verify_mode = OpenSSL::SSL::VERIFY_PEER
+          #@connection.ca_file = File.join(opts[:certificate_path], "vagrant-utility.crt")
           @headers = {
             "Content-Type" => "application/vnd.hashicorp.vagrant.vmware.rest-v1+json",
-            "Origin" => "https://#{host}:#{port}",
+            "Origin" => "http://#{host}:#{port}",
             "User-Agent" => Vagrant::Util::Downloader::USER_AGENT +
               " - VagrantVMWareDesktop/#{VagrantVMwareDesktop::VERSION}",
             "X-Requested-With" => "Vagrant",
           }
-          cert_path = File.join(opts[:certificate_path], "vagrant-utility.client.crt")
-          key_path = File.join(opts[:certificate_path], "vagrant-utility.client.key")
-          begin
-            @connection.cert = OpenSSL::X509::Certificate.new(File.read(cert_path))
-          rescue => err
-            @logger.debug("certificate load failure - #{err.class}: #{err}")
-            raise Errors::DriverAPICertificateError.new(
-              path: cert_path,
-              message: err.message
-            )
-          end
-          begin
-            @connection.key = OpenSSL::PKey::RSA.new(File.read(key_path))
-          rescue => err
-            @logger.debug("key load failure - #{err.class}: #{err}")
-            raise Errors::DriverAPIKeyError.new(
-              path: key_path,
-              message: err.message
-            )
-          end
+          #cert_path = File.join(opts[:certificate_path], "vagrant-utility.client.crt")
+          #key_path = File.join(opts[:certificate_path], "vagrant-utility.client.key")
+          #begin
+          #  @connection.cert = OpenSSL::X509::Certificate.new(File.read(cert_path))
+          #rescue => err
+          #  @logger.debug("certificate load failure - #{err.class}: #{err}")
+          #  raise Errors::DriverAPICertificateError.new(
+          #
+          #    path: cert_path,
+          #    message: err.message
+          #  )
+          #end
+          #begin
+          #  @connection.key = OpenSSL::PKey::RSA.new(File.read(key_path))
+          #rescue => err
+          #  @logger.debug("key load failure - #{err.class}: #{err}")
+          #  raise Errors::DriverAPIKeyError.new(
+          #    path: key_path,
+          #    message: err.message
+          #  )
+          #end
         end
 
         # Perform GET

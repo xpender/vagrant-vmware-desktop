@@ -106,16 +106,16 @@ func (b *BaseDriver) VmwareInfo() (*VmwareInfo, error) {
 		b.logger.Trace("vmware version check failed", "output", out)
 		return nil, errors.New("Failed attempting to check VMware version")
 	}
-	matches, err := utility.MatchPattern(VMWARE_VERSION_PATTERN, out)
+	/*matches, err := utility.MatchPattern(VMWARE_VERSION_PATTERN, out)
 	if err != nil {
 		b.logger.Trace("vmware version match failed", "output", out, "pattern", VMWARE_VERSION_PATTERN, "error", err)
 		return nil, errors.New("Failed to extract VMware version information")
-	}
+	}*/
 	v := &VmwareInfo{
-		Product: matches["product"],
-		Version: matches["version"],
-		Build:   matches["build"],
-		Type:    matches["type"]}
+		Product: "Fusion",
+		Version: "e.x.p",
+		Build:   "18656771",
+		Type:    "Release"}
 	cmd = exec.Command(b.vmwarePaths.Vmx, "--query-license", "LicenseEdition")
 	exitCode, out = utility.ExecuteWithOutput(cmd)
 	if exitCode != 0 {

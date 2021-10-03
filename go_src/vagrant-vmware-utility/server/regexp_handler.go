@@ -89,7 +89,7 @@ func (r *RegexpHandler) invalidDriver(writ http.ResponseWriter) {
 
 func (r *RegexpHandler) invalidRequester(writ http.ResponseWriter, req *http.Request) bool {
 	invalid := false
-	validOrigin := fmt.Sprintf("https://%s:%d", r.api.Address, r.api.Port)
+	validOrigin := fmt.Sprintf("http://%s:%d", r.api.Address, r.api.Port)
 	if len(req.Header["X-Requested-With"]) != 1 || req.Header["X-Requested-With"][0] != "Vagrant" {
 		invalid = true
 	}

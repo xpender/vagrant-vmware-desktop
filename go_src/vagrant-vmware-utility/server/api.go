@@ -1,18 +1,14 @@
 package server
 
 import (
-	"crypto/tls"
-	"crypto/x509"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net"
 	"net/http"
 	"regexp"
 	"sync"
 
 	"github.com/hashicorp/vagrant-vmware-desktop/go_src/vagrant-vmware-utility/driver"
-	"github.com/hashicorp/vagrant-vmware-desktop/go_src/vagrant-vmware-utility/utility"
 
 	hclog "github.com/hashicorp/go-hclog"
 )
@@ -92,11 +88,7 @@ func (a *Api) Start() error {
 		return err
 	}
 	a.logger.Info("api service start", "host", a.Address, "port", a.Port)
-	tlsConfig, err := a.loadTlsConfig()
-	if err != nil {
-		return err
-	}
-	listener, err := tls.Listen("tcp", fmt.Sprintf("%s:%d", a.Address, a.Port), tlsConfig)
+	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%d", a.Address, a.Port))
 	if err != nil {
 		return err
 	}
@@ -151,32 +143,4 @@ func (a *Api) RequestHandler(writ http.ResponseWriter, req *http.Request) {
 
 func (a *Api) Inflight() int {
 	return a.inflight
-}
-
-func (a *Api) loadTlsConfig() (*tls.Config, error) {
-	paths, err := utility.GetCertificatePaths()
-	if err != nil {
-		return nil, err
-	}
-	cert, err := tls.LoadX509KeyPair(paths.Certificate, paths.PrivateKey)
-	if err != nil {
-		return nil, err
-	}
-	pool := x509.NewCertPool()
-	certPem, err := ioutil.ReadFile(paths.Certificate)
-	if err != nil {
-		return nil, err
-	}
-	if !pool.AppendCertsFromPEM(certPem) {
-		return nil, errors.New("failed to properly load certificate")
-	}
-	tlsConfig := &tls.Config{
-		Certificates: []tls.Certificate{cert},
-		ClientAuth:   tls.RequireAndVerifyClientCert,
-		ClientCAs:    pool,
-		ServerName:   "127.0.0.1",
-		RootCAs:      pool,
-	}
-	tlsConfig.BuildNameToCertificate()
-	return tlsConfig, nil
 }
